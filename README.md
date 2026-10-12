@@ -66,6 +66,12 @@ Vite affichera deux adresses :
 > **Pour tester sur votre smartphone :**
 > Connectez votre smartphone au même réseau Wi-Fi que votre ordinateur, ouvrez Safari ou Chrome, et tapez l'adresse `https://192.168.x.x:5173/`. Acceptez le certificat de développement local, autorisez la caméra, et visez la carte !
 
+### Dépannage caméra (écran noir)
+- Vérifiez que vous utilisez **HTTPS** (ou `localhost`), sinon `getUserMedia` sera bloqué.
+- Autorisez explicitement l’accès caméra dans le navigateur (Safari/Chrome).
+- Fermez les autres apps qui utilisent déjà la caméra (visioconférence, caméra native, etc.).
+- Si l’accès est refusé, l’interface affiche un message d’erreur explicite et il faut relancer l’expérience après avoir accordé la permission.
+
 ---
 
 ## 🌐 Déploiement sur GitHub & GitHub Pages

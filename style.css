@@ -169,6 +169,35 @@ html, body {
 }
 
 /* AR Viewport & HUD Overlay */
+#ar-scene {
+  position: fixed !important;
+  inset: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 1;
+  background: transparent !important;
+}
+
+#ar-scene video,
+video.mindar-video,
+video[data-mindar-video] {
+  position: fixed !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  background: transparent !important;
+}
+
+#ar-scene canvas,
+#ar-scene .a-canvas {
+  position: fixed !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+}
+
 #hud-container {
   position: fixed;
   inset: 0;
