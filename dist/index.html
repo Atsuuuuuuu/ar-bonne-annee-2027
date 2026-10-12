@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Carte de Vœux 2027 • Réalité Augmentée 3D & Feux d'Artifice</title>
+  <meta name="description" content="Scannez votre carte de vœux pour faire apparaître Bonne Année 2027 en 3D et des feux d'artifice immersifs en Réalité Augmentée (WebAR).">
+
+  <!-- A-Frame & MindAR vendor scripts -->
+  <script src="./assets/vendor/aframe.min.js"></script>
+  <script src="./assets/vendor/mindar-image-aframe.prod.js"></script>
+  <script src="./assets/vendor/aframe-text-geometry-component.min.js"></script>
+
+  <link rel="icon" href="./assets/card-target-9RXMIAjQ.png" type="image/png">
+  <script type="module" crossorigin src="./assets/index-ld0Sm7mb.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CqLu88GH.css">
+</head>
+<body>
+
+  <!-- Welcome / Intro Screen -->
+  <section id="welcome-screen">
+    <div class="welcome-card">
+      <span class="card-badge">✨ WebAR Expérience 2027</span>
+      <img src="./assets/card-target-9RXMIAjQ.png" alt="Carte de Vœux 2027" class="welcome-preview-thumb">
+      
+      <h1 class="welcome-title">Bonne Année 2027</h1>
+      <p class="welcome-subtitle">
+        Pointez votre caméra vers la carte de vœux pour déclencher l'animation 3D et les feux d'artifice scintillants !
+      </p>
+
+      <button id="start-ar-btn" class="primary-btn" aria-label="Démarrer la réalité augmentée">
+        <span>✨</span> Lancer l'expérience AR
+      </button>
+
+      <div class="welcome-tips">
+        <span>💡</span> Aucun téléchargement requis • Fonctionne sur mobile et PC
+      </div>
+    </div>
+  </section>
+
+  <!-- AR Scanning HUD -->
+  <header id="hud-container">
+    <nav class="top-bar">
+      <div class="hud-title-badge">🎉 2027 AR</div>
+      <div class="hud-actions">
+        <button id="sound-toggle-btn" class="glass-pill-btn" aria-label="Activer ou désactiver le son">
+          <span>🔊</span> Son Activé
+        </button>
+        <button id="preview-card-btn" class="glass-pill-btn" aria-label="Afficher la carte à scanner">
+          <span>🖼️</span> Voir Carte
+        </button>
+      </div>
+    </nav>
+
+    <!-- Scan Reticle -->
+    <main class="reticle-container" id="scan-reticle">
+      <div class="reticle-corner corner-tl"></div>
+      <div class="reticle-corner corner-tr"></div>
+      <div class="reticle-corner corner-bl"></div>
+      <div class="reticle-corner corner-br"></div>
+      <div class="scan-beam"></div>
+    </main>
+
+    <!-- Status Indicator -->
+    <div class="hud-status-wrapper">
+      <div class="hud-status-pill" id="hud-status">
+        <span class="status-icon">🔍</span> Visez la carte de vœux
+      </div>
+    </div>
+
+    <!-- Bottom Controls -->
+    <footer class="bottom-bar">
+      <button id="snapshot-btn" class="capture-btn" aria-label="Prendre une photo souvenir" title="Prendre une photo">
+        <div class="capture-inner-circle">📸</div>
+      </button>
+    </footer>
+  </header>
+
+  <!-- Card Preview Modal -->
+  <aside class="modal-overlay" id="card-modal" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Carte de Vœux à scanner</h2>
+        <button id="close-modal-btn" class="close-btn" aria-label="Fermer la fenêtre">✕</button>
+      </div>
+      <img src="./assets/card-target-9RXMIAjQ.png" alt="Modèle de la carte de vœux" class="modal-card-img">
+      <p class="modal-desc">
+        Affichez cette image sur un écran ou imprimez-la, puis visez-la avec votre téléphone pour voir la magie opérer !
+      </p>
+      <a href="./card-target.png" download="carte-bonne-annee-2027.png" class="modal-download-btn">
+        📥 Télécharger l'image de la carte
+      </a>
+    </div>
+  </aside>
+
+  <!-- 3D WebAR Scene -->
+  <a-scene
+    id="ar-scene"
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 5;"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights: true, antialias: true, alpha: true"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+
+    <a-assets>
+      <a-asset-item id="festiveFont" src="./assets/fonts/helvetiker_bold.typeface.json"></a-asset-item>
+    </a-assets>
+
+    <!-- Camera -->
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <!-- Target Marker on Image -->
+    <a-entity id="target-marker" mindar-image-target="targetIndex: 0">
+
+      <!-- Scene lighting for realistic metallic gold reflection -->
+      <a-light type="ambient" color="#ffffff" intensity="0.85"></a-light>
+      <a-light type="directional" color="#FFF176" intensity="1.6" position="1 2 2"></a-light>
+      <a-light type="directional" color="#C084FC" intensity="0.9" position="-1.5 -0.5 1.5"></a-light>
+      <a-light type="point" color="#72EFDD" intensity="1.1" position="0 -0.5 0.3"></a-light>
+
+      <!-- 3D Festive Group (animates on detection) -->
+      <a-entity id="festive-scene" festive-scene-controller="visible: false" position="0 0 0">
+
+        <!-- Glowing backing aura -->
+        <a-ring
+          radius-inner="0.35"
+          radius-outer="0.38"
+          position="0 0.1 0.02"
+          material="color: #FFD700; opacity: 0.35; transparent: true; side: double">
+        </a-ring>
+
+        <!-- 3D Text: BONNE -->
+        <a-entity
+          position="-0.32 0.22 0.08"
+          text-geometry="value: BONNE; font: #festiveFont; size: 0.11; height: 0.025; bevelEnabled: true; bevelSize: 0.004; bevelThickness: 0.006;"
+          material="color: #FFD700; metalness: 0.88; roughness: 0.18;">
+        </a-entity>
+
+        <!-- 3D Text: ANNEE ! -->
+        <a-entity
+          position="-0.34 0.08 0.08"
+          text-geometry="value: ANNEE !; font: #festiveFont; size: 0.11; height: 0.025; bevelEnabled: true; bevelSize: 0.004; bevelThickness: 0.006;"
+          material="color: #FFD700; metalness: 0.88; roughness: 0.18;">
+        </a-entity>
+
+        <!-- 3D Accent slash for French É in ANNÉE -->
+        <a-box
+          position="0.085 0.20 0.09"
+          rotation="0 0 -35"
+          scale="0.022 0.006 0.015"
+          material="color: #FFD700; metalness: 0.88; roughness: 0.18;">
+        </a-box>
+
+        <!-- 3D Numerals: 2027 -->
+        <a-entity
+          position="-0.26 -0.10 0.10"
+          text-geometry="value: 2027; font: #festiveFont; size: 0.14; height: 0.035; bevelEnabled: true; bevelSize: 0.005; bevelThickness: 0.008;"
+          material="color: #FFF3B0; metalness: 0.92; roughness: 0.12;">
+        </a-entity>
+
+        <!-- Underline decoration banner -->
+        <a-box
+          position="0 -0.16 0.07"
+          scale="0.45 0.008 0.01"
+          material="color: #FFD700; metalness: 0.85; roughness: 0.2;">
+        </a-box>
+      </a-entity>
+
+      <!-- 3D Fireworks Particle System -->
+      <a-entity id="fireworks-container" fireworks-controller="active: false"></a-entity>
+
+    </a-entity>
+  </a-scene>
+
+  <!-- Application Logic -->
+</body>
+</html>

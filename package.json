@@ -1,0 +1,26 @@
+{
+  "name": "ar-bonne-annee-2027",
+  "version": "1.0.0",
+  "description": "Expérience WebAR en Réalité Augmentée pour carte de vœux : Bonne Année 2027 en 3D & Feux d'artifice interactifs.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "keywords": [
+    "webar",
+    "augmented-reality",
+    "mindar",
+    "aframe",
+    "threejs",
+    "bonne-annee",
+    "fireworks"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@vitejs/plugin-basic-ssl": "^1.2.0",
+    "vite": "^6.2.0"
+  }
+}
