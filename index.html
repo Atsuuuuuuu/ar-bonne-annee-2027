@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>AR 2027 - Feux d'artifice</title>
+
+  <!-- A-Frame & MindAR -->
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  
+  <!-- Feux d'artifice Three.js & Synthèse Sonore -->
+  <script src="./fireworks.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* Force l'affichage de la vidéo caméra en plein écran */
+    video {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      z-index: 0 !important;
+      background: #000;
+    }
+
+    /* Scène 3D au-dessus de la caméra */
+    a-scene {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      z-index: 1 !important;
+      background: transparent !important;
+    }
+
+    /* Écran simple avec juste le bouton pour lancer le scan */
+    #start-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+      background: #0b0f19;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    #start-btn {
+      background: linear-gradient(135deg, #FFB703, #FB8500);
+      color: #000;
+      font-weight: 800;
+      font-size: 22px;
+      padding: 20px 48px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(251, 133, 0, 0.5);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    #start-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 14px 40px rgba(251, 133, 0, 0.7);
+    }
+
+    #start-btn:active {
+      transform: scale(0.96);
+    }
+
+    #error-msg {
+      margin-top: 24px;
+      color: #f87171;
+      font-size: 14px;
+      max-width: 380px;
+      line-height: 1.5;
+      display: none;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 12px 18px;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fallback caméra pour compatibilité macOS / Webcams -->
+  <script>
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      const origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+      navigator.mediaDevices.getUserMedia = async function (constraints) {
+        try {
+          return await origGetUserMedia(constraints);
+        } catch (err) {
+          if (constraints && constraints.video && constraints.video.facingMode) {
+            console.warn('Fallback caméra sans facingMode...');
+            return await origGetUserMedia({ audio: false, video: true });
+          }
+          throw err;
+        }
+      };
+    }
+  </script>
+
+  <!-- Écran avec UNIQUEMENT le bouton pour lancer le scan -->
+  <div id="start-screen">
+    <button id="start-btn">📷 Lancer le scan</button>
+    <div id="error-msg"></div>
+  </div>
+
+  <!-- Scène AR A-Frame -->
+  <a-scene
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: no; uiError: no; filterMinCF: 0.0005; filterBeta: 15; missTolerance: 20;"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights: false"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    id="ar-scene"
+  >
+    <!-- Chargement des assets 3D -->
+    <a-assets>
+      <a-asset-item id="fireworkModel" src="./firework_rocket.glb"></a-asset-item>
+    </a-assets>
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <!-- Cible de l'affiche 2027 avec feux d'artifice 3D & Modèle 3D Stylé -->
+    <a-entity mindar-image-target="targetIndex: 0" id="poster-target" fireworks-system="autoLaunch: true; launchInterval: 750;">
+      
+      <!-- Rig de vol de la fusée 3D contrôlé par le script fireworks.js (Décollage 3s après scan) -->
+      <a-entity id="rocketFlightRig" position="0 -0.2 0.22">
+        <a-gltf-model
+          id="fireworkRocket"
+          src="#fireworkModel"
+          position="0 0 0"
+          rotation="0 0 0"
+          scale="0.45 0.45 0.45"
+        ></a-gltf-model>
+      </a-entity>
+
+    </a-entity>
+  </a-scene>
+
+  <script>
+    const startScreen = document.getElementById('start-screen');
+    const startBtn = document.getElementById('start-btn');
+    const errorMsg = document.getElementById('error-msg');
+    const sceneEl = document.querySelector('a-scene');
+
+    startBtn.addEventListener('click', async () => {
+      startBtn.disabled = true;
+      startBtn.innerText = 'Ouverture de la caméra...';
+      errorMsg.style.display = 'none';
+
+      // Initialiser l'audio au clic
+      if (window.FireworkAudioInstance) {
+        window.FireworkAudioInstance.init();
+      }
+
+      // Gestion des erreurs caméra MindAR
+      sceneEl.addEventListener('arError', (ev) => {
+        console.error('Erreur MindAR:', ev.detail);
+        startScreen.style.display = 'flex';
+        startBtn.disabled = false;
+        startBtn.innerText = '📷 Réessayer le scan';
+        errorMsg.style.display = 'block';
+        errorMsg.innerHTML = "<strong>Accès caméra refusé ou indisponible :</strong><br>Vérifiez que votre navigateur (icône caméra dans la barre d'adresse) et macOS ont autorisé l'accès à la caméra.";
+      });
+
+      try {
+        const arSystem = sceneEl.systems['mindar-image-system'];
+        if (!arSystem) {
+          throw new Error("Système MindAR non prêt");
+        }
+        await arSystem.start();
+        // Caméra démarrée : on masque complètement le bouton
+        startScreen.style.display = 'none';
+      } catch (err) {
+        console.error('Erreur démarrage AR:', err);
+        startScreen.style.display = 'flex';
+        startBtn.disabled = false;
+        startBtn.innerText = '📷 Réessayer le scan';
+        errorMsg.style.display = 'block';
+        errorMsg.innerHTML = "<strong>Erreur :</strong> " + (err.message || err.name) + "<br>Vérifiez les permissions de la caméra.";
+      }
+    });
+
+    // Toucher / Clic pour tirer un feu d'artifice personnalisé
+    window.addEventListener('pointerdown', (e) => {
+      if (startScreen.style.display !== 'none') return;
+      const nx = (e.clientX / window.innerWidth - 0.5) * 1.0;
+      const ny = (1.0 - (e.clientY / window.innerHeight)) * 1.2 + 0.2;
+      if (window.launchCustomFirework) {
+        window.launchCustomFirework(nx, ny);
+      }
+    });
+  </script>
+</body>
+</html>

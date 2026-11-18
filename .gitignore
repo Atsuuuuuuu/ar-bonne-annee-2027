@@ -1,0 +1,10 @@
+# Security: do not commit local SSL certificates
+*.pem
+cert.pem
+key.pem
+
+# Archives & Temp
+*.zip
+example/
+tools/
+.DS_Store
