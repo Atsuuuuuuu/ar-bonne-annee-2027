@@ -2,10 +2,9 @@
 
 Projet WebAR interactif développé avec **MindAR**, **A-Frame** et **Three.js**.  
 Quand l'affiche officielle **"2027 BONNE ANNÉE !"** est scannée avec la caméra :
-1. Un **modèle 3D stylé d'un trio de fusées dorées** apparaît en lévitation au centre de l'affiche.
-2. Exactement **3 secondes après le scan**, les fusées s'allument, crachent des flammes et **décollent à toute vitesse vers le ciel** !
-3. Au sommet de leur trajectoire, elles explosent en une **gigantesque triple détonation pyrotechnique** multicolore (or, violet néon, cyan électrique) avec synthèse sonore réaliste.
-4. Des feux d'artifice continuent de voler et exploser dans le ciel festif, et vous pouvez toucher l'écran pour en déclencher d'autres !
+1. Le modèle animé **`fireworks_2027_ar.glb`** apparaît sur l'affiche et joue tous ses clips d'animation jusqu'à leur fin.
+2. Si l'affiche est perdue puis reconnue à nouveau, l'animation complète repart du début.
+3. Des feux d'artifice procéduraux continuent d'éclater autour du modèle, et vous pouvez toucher l'écran pour en déclencher d'autres !
 
 ---
 

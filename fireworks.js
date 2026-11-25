@@ -260,7 +260,8 @@
   AFRAME.registerComponent('fireworks-system', {
     schema: {
       autoLaunch: { type: 'boolean', default: true },
-      launchInterval: { type: 'number', default: 800 }
+      launchInterval: { type: 'number', default: 800 },
+      rocketFlight: { type: 'boolean', default: true }
     },
 
     init: function () {
@@ -349,25 +350,29 @@
       window.FireworkAudioInstance.init();
       window.FireworkAudioInstance.playCelebrationFanfare();
 
-      // Reset 3D Rocket for 3-second countdown
-      if (!this.rocketRig) {
-        this.rocketRig = document.getElementById('rocketFlightRig');
+      if (this.data.rocketFlight) {
+        // Reset 3D Rocket for 3-second countdown
+        if (!this.rocketRig) {
+          this.rocketRig = document.getElementById('rocketFlightRig');
+        }
+        if (this.rocketRig) {
+          this.rocketRig.object3D.visible = true;
+          this.rocketRig.object3D.position.set(0, this.rocketBaseY, 0.22);
+          this.rocketRig.object3D.rotation.set(0, 0, 0);
+          this.rocketRig.object3D.scale.set(1, 1, 1);
+        }
+        this.rocketState = 'WAITING';
+        this.countdown = 3.0; // EXACTEMENT 3 SECONDES AVANT DÉCOLLAGE
       }
-      if (this.rocketRig) {
-        this.rocketRig.object3D.visible = true;
-        this.rocketRig.object3D.position.set(0, this.rocketBaseY, 0.22);
-        this.rocketRig.object3D.rotation.set(0, 0, 0);
-        this.rocketRig.object3D.scale.set(1, 1, 1);
-      }
-      this.rocketState = 'WAITING';
-      this.countdown = 3.0; // EXACTEMENT 3 SECONDES AVANT DÉCOLLAGE
     },
 
     onTargetLost: function () {
       console.log('[AR] Target lost.');
       this.targetFound = false;
-      this.rocketState = 'WAITING';
-      this.countdown = 3.0;
+      if (this.data.rocketFlight) {
+        this.rocketState = 'WAITING';
+        this.countdown = 3.0;
+      }
     },
 
     createFloating3DText: function () {
@@ -646,11 +651,11 @@
       // -------------------------------------------------------------
       // GESTION DU DÉCOLLAGE DE LA FUSÉE 3D (3s après le scan)
       // -------------------------------------------------------------
-      if (!this.rocketRig) {
+      if (this.data.rocketFlight && !this.rocketRig) {
         this.rocketRig = document.getElementById('rocketFlightRig');
       }
 
-      if (this.rocketRig && this.targetFound) {
+      if (this.data.rocketFlight && this.rocketRig && this.targetFound) {
         const rigObj = this.rocketRig.object3D;
 
         if (this.rocketState === 'WAITING') {

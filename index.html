@@ -11,6 +11,7 @@
   
   <!-- Feux d'artifice Three.js & Synthèse Sonore -->
   <script src="./fireworks.js"></script>
+  <script src="./model-animation.js"></script>
 
   <style>
     html, body {
@@ -137,22 +138,23 @@
   >
     <!-- Chargement des assets 3D -->
     <a-assets>
-      <a-asset-item id="fireworkModel" src="./firework_rocket.glb"></a-asset-item>
+      <a-asset-item id="fireworksModelAsset" src="./fireworks_2027_ar.glb"></a-asset-item>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <!-- Cible de l'affiche 2027 avec feux d'artifice 3D & Modèle 3D Stylé -->
-    <a-entity mindar-image-target="targetIndex: 0" id="poster-target" fireworks-system="autoLaunch: true; launchInterval: 750;">
+    <a-entity mindar-image-target="targetIndex: 0" id="poster-target" fireworks-system="autoLaunch: true; launchInterval: 750; rocketFlight: false;">
       
-      <!-- Rig de vol de la fusée 3D contrôlé par le script fireworks.js (Décollage 3s après scan) -->
+      <!-- Toute l'animation du GLB repart du début à chaque détection de l'affiche -->
       <a-entity id="rocketFlightRig" position="0 -0.2 0.22">
         <a-gltf-model
-          id="fireworkRocket"
-          src="#fireworkModel"
+          id="fireworksModel"
+          src="#fireworksModelAsset"
           position="0 0 0"
           rotation="0 0 0"
           scale="0.45 0.45 0.45"
+          scan-model-animation="target: #poster-target"
         ></a-gltf-model>
       </a-entity>
 
