@@ -4,7 +4,6 @@ Projet WebAR interactif développé avec **MindAR**, **A-Frame** et **Three.js**
 Quand l'affiche officielle **"2027 BONNE ANNÉE !"** est scannée avec la caméra :
 1. Le modèle animé **`fireworks_2027_ar.glb`** apparaît sur l'affiche et joue tous ses clips d'animation jusqu'à leur fin.
 2. Si l'affiche est perdue puis reconnue à nouveau, l'animation complète repart du début.
-3. Des feux d'artifice procéduraux continuent d'éclater autour du modèle, et vous pouvez toucher l'écran pour en déclencher d'autres !
 
 ---
 
@@ -47,6 +46,5 @@ Puis ouvrez :
 ## 🛠️ Technologies utilisées
 
 - [MindAR](https://hiukim.github.io/mind-ar-js-doc/) : Moteur de tracking d'image WebAR léger et rapide.
-- [A-Frame](https://aframe.io/) & [Three.js](https://threejs.org/) : Rendu 3D et physique des particules.
-- **Web Audio API** : Synthétiseur procédural de bruitages pyrotechniques (sifflement, détonation sub-bass, crépitements).
-- **Format GLB (glTF 2.0)** : Modèle 3D optimisé avec matériaux PBR métalliques et textures dorées.
+- [A-Frame](https://aframe.io/) & [Three.js](https://threejs.org/) : Rendu 3D.
+- **Format GLB (glTF 2.0)** : Modèle 3D animé avec matériaux PBR métalliques et textures dorées.

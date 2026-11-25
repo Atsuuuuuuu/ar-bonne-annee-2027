@@ -8,9 +8,6 @@
   <!-- A-Frame & MindAR -->
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-  
-  <!-- Feux d'artifice Three.js & Synthèse Sonore -->
-  <script src="./fireworks.js"></script>
   <script src="./model-animation.js"></script>
 
   <style>
@@ -143,9 +140,8 @@
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <!-- Cible de l'affiche 2027 avec feux d'artifice 3D & Modèle 3D Stylé -->
-    <a-entity mindar-image-target="targetIndex: 0" id="poster-target" fireworks-system="autoLaunch: true; launchInterval: 750; rocketFlight: false;">
-      
+    <!-- Cible de l'affiche 2027 et modèle 3D -->
+    <a-entity mindar-image-target="targetIndex: 0" id="poster-target">
       <!-- Toute l'animation du GLB repart du début à chaque détection de l'affiche -->
       <a-entity id="rocketFlightRig" position="0 -0.2 0.22">
         <a-gltf-model
@@ -157,7 +153,6 @@
           scan-model-animation="target: #poster-target"
         ></a-gltf-model>
       </a-entity>
-
     </a-entity>
   </a-scene>
 
@@ -171,11 +166,6 @@
       startBtn.disabled = true;
       startBtn.innerText = 'Ouverture de la caméra...';
       errorMsg.style.display = 'none';
-
-      // Initialiser l'audio au clic
-      if (window.FireworkAudioInstance) {
-        window.FireworkAudioInstance.init();
-      }
 
       // Gestion des erreurs caméra MindAR
       sceneEl.addEventListener('arError', (ev) => {
@@ -202,16 +192,6 @@
         startBtn.innerText = '📷 Réessayer le scan';
         errorMsg.style.display = 'block';
         errorMsg.innerHTML = "<strong>Erreur :</strong> " + (err.message || err.name) + "<br>Vérifiez les permissions de la caméra.";
-      }
-    });
-
-    // Toucher / Clic pour tirer un feu d'artifice personnalisé
-    window.addEventListener('pointerdown', (e) => {
-      if (startScreen.style.display !== 'none') return;
-      const nx = (e.clientX / window.innerWidth - 0.5) * 1.0;
-      const ny = (1.0 - (e.clientY / window.innerHeight)) * 1.2 + 0.2;
-      if (window.launchCustomFirework) {
-        window.launchCustomFirework(nx, ny);
       }
     });
   </script>
